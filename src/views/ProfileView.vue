@@ -55,17 +55,8 @@
     </div>
 </template>
 
-<script setup>
-import { ref } from "vue";
-import { supabase } from "../supabase";
+<script>
 
-defineProps({
-  msg: String,
-});
-
-async function signOut() {
-  const { error } = await supabase.auth.signOut();
-}
 </script>
 
 <style>

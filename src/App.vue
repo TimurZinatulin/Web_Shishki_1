@@ -46,5 +46,5 @@ export default {
 </script>
   
 <style>
-/* @import '@/templates/main_page.css'; */
+@import '@/templates/main_page.css';
 </style>

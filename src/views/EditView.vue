@@ -17,8 +17,8 @@
     <div id="chphoto">
         <img id="photo" src="../assets/default_photo.png" alt="">
         <a href="" class="link" style="position: inherit; border: 2px solid rgba(151, 71, 255, 1);">СМЕНИТЬ ФОТО</a>
+        <button style="left: 100px; top: -500px;" @click="signOut" class="btn2">Выйти</button>
     </div>
-    <button style="position: relative; left: 1100px; top: -500px;" @click="signOut" class="btn2">Выйти</button>
 </template>
 
 <script setup>
