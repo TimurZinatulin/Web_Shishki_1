@@ -1,126 +1,271 @@
 <template>
-    <div id="content" style="position: relative; left: -170px; top: 20px; height: 1200px;">
-        <h1 id="h2" style="top: -570px; left: 1455px; position: relative;">Modeus</h1>
-        <div id="chphoto" style="top: -310px; left: 105px;">
-            <img id="photo1" src="../assets/default_photo.png" alt="">
-            <a href="" class="link1" style="position: inherit; border: 2px solid rgba(151, 71, 255, 1);">ЗАГРУЗИТЬ ФОТО</a>
+  <section class="create">
+    <div class="container">
+      <h2 class="title" v-if="title.length">{{ title }}</h2>
+      <h2 class="title" v-else>Название проекта</h2>
+      <div class="create__info">
+        <div class="create__info-image">
+          <label for="file-input" class="image__input">
+            <input
+              ref="fileInput"
+              @change="onFileChange($event)"
+              type="file"
+              id="file-input"
+            />
+            <img v-if="file" :src="getImageUrl(file)" alt="" />
+            <img v-else src="../assets/images/camera-icon.svg" alt="" />
+          </label>
+          <Button class="create__info-btn" @click="$refs.fileInput.click()"
+            >Загрузить изображение</Button
+          >
         </div>
-        <p class="p" style="top: -460px; left: 1330px; width: 200px;">Название проекта</p>
-        <div style="box-sizing: border-box;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                padding: 11px 10px;
-                gap: 10px;
-                width: 330px;
-                height: 38px;
-                border: 2px solid #3D008C;
-                flex: none;
-                order: 1;
-                align-self: stretch;
-                flex-grow: 0;
-                position: inherit;
-                top: 120px;
-                left: 40px;
-                ">
-            Modeus
+        <div class="create__info-content">
+          <h2 class="create__info-title">Название проекта</h2>
+          <input v-model="title" type="text" class="create__info-input" />
+          <h2 class="create__info-title">Описание</h2>
+          <textarea
+            v-model="description"
+            class="create__info-textarea"
+            cols="30"
+            rows="10"
+          />
+          <h2 class="create__info-title">Ссылка</h2>
+          <input v-model="link" type="text" class="create__info-input" />
         </div>
-        <p class="p" style="top: -380px; left: 1040px; width: 200px;">Описание</p>
-        <div style="box-sizing: border-box;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                padding: 11px 10px;
-                gap: 10px;
-                width: 330px;
-                height: 222px;
-                border: 2px solid #3D008C;
-                flex: none;
-                order: 1;
-                align-self: stretch;
-                flex-grow: 0;
-                position: relative;
-                left: -380px;
-                top: 200px;
-                ">
-            Программа "Modeus" на языке Python - это отличный способ улучшить свою реакцию.<br>
-
-С помощью этой программы вы можете тренировать свою реакцию в различных условиях и с тремя разными уровнями сложности.
-Modeus позволяет создавать разные наборы заданий, что делает каждую тренировку уникальной и интересной. 
-        </div>
-        <p class="p" style="top: -120px; left: 750px; width: 200px;">Ссылка</p>
-        <div style="box-sizing: border-box;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                padding: 11px 10px;
-                gap: 10px;
-                width: 330px;
-                height: 38px;
-                border: 2px solid #3D008C;
-                flex: none;
-                order: 1;
-                align-self: stretch;
-                position: relative;
-                left: -800px;
-                top: 460px;
-                flex-grow: 0;">
-            https://urfu.modeus.org/
-        </div>
+      </div>
+      <div class="create__images">
+        <label for="multiple-file-input" class="create__images-items">
+          <input
+            ref="multipleFileInput"
+            @change="onFilesChange($event)"
+            multiple
+            type="file"
+            id="multiple-file-input"
+          />
+          <p v-if="!files.length" class="create__images-empty">
+            Добавьте изображения
+          </p>
+          <img
+            v-for="(item, i) of files"
+            :key="i"
+            class="create__images-item"
+            :src="getImageUrl(item)"
+            alt=""
+          />
+        </label>
+        <Button
+          class="create__images-btn"
+          @click="$refs.multipleFileInput.click()"
+          >Добавить фото</Button
+        >
+      </div>
+      <Button @click="createProject" class="create__btn">Сохранить</Button>
     </div>
-    <div id="content" style="position: relative; left: -110px; top: 20px; height: 1200px;">
-        <div style="box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px;
-            gap: 10px;
-            width: 840px;
-            height: 231px;
-            border: 3px solid #9747FF;
-            border-radius: 30px;
-            flex: none;
-            order: 3;
-            position: relative;
-            top: -1000px;
-            left: -170px;
-            flex-grow: 0;">
-            <img src="../assets/modeus2.jpg" alt="" style="display: flex;
-                flex-direction: row;
-                align-items: flex-start;
-                padding: 10px;
-                gap: 10px;
-                width: 275px;
-                height: 211px;
-                flex: none;
-                order: 0;
-                position: relative;
-                left: -190px;
-                flex-grow: 0;">
-            <img src="../assets/modeus3.jpg" alt="" style="display: flex;
-                flex-direction: row;
-                justify-content: center;
-                align-items: center;
-                padding: 10px;
-                gap: 10px;
-                width: 275px;
-                height: 211px;
-                flex: none;
-                order: 1;
-                position: relative;
-                left: 200px;
-                top: -210px;
-                flex-grow: 0;">
-        </div>
-        <a href="" class="link1" style="position: relative; top: -820px; left: 750px; border: 2px solid rgba(151, 71, 255, 1);">ДОБАВИТЬ ФОТО</a>
-        <a href="" class="btn" style="top: -730px; left: 460px; padding-left: 40px; padding-right: 40px;">Сохранить</a>
-    </div>
+  </section>
 </template>
 
 <script>
+import Button from "@/components/UI/Button.vue";
+import { supabase } from "@/utils/supabase";
+import { v4 as uuidv4 } from "uuid";
 
+export default {
+  components: {
+    Button,
+  },
+  data() {
+    return {
+      file: null,
+      title: "",
+      description: "",
+      link: "",
+      files: [],
+    };
+  },
+  methods: {
+    onFilesChange(e) {
+      var files = e.target.files || e.dataTransfer.files;
+      if (!files.length) return;
+      this.files = files;
+    },
+    onFileChange(e) {
+      var files = e.target.files || e.dataTransfer.files;
+      if (!files.length) return;
+      this.file = files[0];
+    },
+    getImageUrl(file) {
+      return URL.createObjectURL(file);
+    },
+    async createProject() {
+      const user = this.$store.state.user;
+
+      const uuid = uuidv4();
+
+      const imageUrl = `preview_img/${user.id}-${uuid}.${this.file.type}`;
+
+      const { error } = await supabase.storage
+        .from("portfolio_images")
+        .upload(imageUrl, this.file, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      const {
+        data: { publicURL },
+      } = supabase.storage.from("portfolio_images").getPublicUrl(imageUrl);
+
+      let imageUrlMain = [];
+
+      for (let i = 0; i < this.files.length; i++) {
+        const url = `main_img/${user.id}-${uuid}-${i + 1}.${
+          this.files[i].type
+        }`;
+        // imageUrlMain.push(url);
+        await supabase.storage
+          .from("portfolio_images")
+          .upload(url, this.files[i], {
+            cacheControl: "3600",
+            upsert: false,
+          });
+
+        const {
+          data: { publicURL: finalURL },
+        } = supabase.storage.from("portfolio_images").getPublicUrl(url);
+        imageUrlMain.push(finalURL);
+      }
+      await supabase.from("projects").insert({
+        title: this.title,
+        description: this.description,
+        link: this.link,
+        preview_img_url: publicURL,
+        user_id: user.id,
+        main_img_url: imageUrlMain.join(";"),
+        id: uuid,
+        rating: 0,
+      });
+
+      this.$router.push({
+        name: "ProfileProjects",
+      });
+    },
+  },
+};
 </script>
 
-<style>
+<style lang="scss" scoped>
+.create {
+  &__btn {
+    display: flex;
+    margin: 0 auto;
+  }
+  &__images {
+    width: 100%;
 
+    &-btn {
+      display: flex;
+      margin: 0 auto 60px;
+    }
+
+    &-items {
+      border: 3px solid $purple;
+      display: grid;
+      padding: 20px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+      min-height: 200px;
+
+      input {
+        display: none;
+      }
+    }
+
+    &-item {
+      height: 200px;
+      width: 100%;
+      object-fit: contain;
+      object-position: center;
+      border: 3px solid $purple;
+    }
+  }
+  .container {
+    padding: 30px 20px 50px;
+    max-width: 900px;
+
+    & > .title {
+      margin-bottom: 60px;
+    }
+  }
+
+  &__info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 60px;
+
+    &-title {
+      font-size: 14px;
+      color: $blue;
+    }
+
+    &-content {
+      width: 340px;
+    }
+
+    &-input,
+    &-textarea {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid $blue;
+      font-size: 14px;
+      font-weight: 600;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    &-textarea {
+      resize: none;
+      margin-bottom: 40px;
+    }
+
+    &-input {
+      &:first-of-type {
+        margin-bottom: 40px;
+      }
+    }
+
+    &-btn {
+      display: flex;
+      margin: 0 auto;
+    }
+
+    &-image {
+      .image__input {
+        width: 340px;
+        display: block;
+        aspect-ratio: 1;
+        position: relative;
+        border: 3px solid $purple;
+        border-radius: 30px;
+        overflow: hidden;
+        margin-bottom: 20px;
+
+        img {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          left: 0;
+          top: 0;
+          object-fit: cover;
+          object-position: center;
+        }
+
+        input {
+          display: none;
+        }
+      }
+    }
+  }
+}
 </style>

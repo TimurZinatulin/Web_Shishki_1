@@ -1,114 +1,177 @@
 <template>
-    <div style="display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        align-self: center;
-        padding: 30px 90px;
-        gap: 30px;
-        position: relative;
-        width: 100%;
-        height: 507px;
-        background: linear-gradient(180deg, #CEA8FF 0%, #3D008C 100%);
-        flex: none;
-        order: 3;
-        flex-grow: 0;
-        margin-top: -200px;
-        top: 185px;">
-        <div style="box-sizing: border-box;
-            width: 340px;
-            height: 340px;
-            border: 3px solid #FFFFFF;
-            border-radius: 30px;
-            flex: none;
-            order: 0;
-            position: relative;
-            left: -500px;
-            top: 200px;
-            flex-grow: 0;"><img style="width: 335px; height: 336px; border-radius: 25px; top: 0px; position: relative;" src="../assets/modeus.png" alt="">
+  <div class="home">
+    <section class="home__intro">
+      <div class="container">
+        <div class="home__intro-content">
+          <h1 class="home__intro-title">
+            Digital <br />
+            portfolio
+          </h1>
+          <p class="home__intro-text">
+            Уникальный сервис для размещения своих проектов и наработок
+          </p>
+          <Button class="home__intro-btn">Создать проект</Button>
         </div>
-        <div style="display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            padding: 30px;
-            gap: 30px;
-            width: 600px;
-            height: 357px;
-            flex: none;
-            order: 1;
-            position: relative;
-            left: -100px;
-            top: -200px;
-            flex-grow: 0;">
-            <h1 style="width: 232px;
-                height: 75px;
-                font-family: 'Roboto';
-                font-style: normal;
-                font-weight: 600;
-                font-size: 64px;
-                line-height: 75px;
-                display: flex;
-                align-items: center;
-                color: #FFFFFF;">Modeus</h1><br>
-            <p id="p">Программа "Modeus" на языке Python - это отличный способ улучшить свою реакцию.</p><br>
-
-            <p id="p1">С помощью этой программы вы можете тренировать свою реакцию в различных условиях и с тремя разными уровнями сложности.
-            Modeus позволяет создавать разные наборы заданий, что делает каждую тренировку уникальной и интересной. </p><br>
-            <div style="position: relative; top: -160px; left: 135px;"><router-link to="/profile"><img style="width: 70px; height: 70px; border-radius: 100%;" src="../assets/shadrin.png" alt=""><p style="position: relative; top: -60px; left: 90px; color: white; font-size: 16px;">Denis Shadrin</p></router-link></div>
-            <div class="like" style="background: none; border: 2px solid white; font-size: 25px; padding: 30px 10px; width: 140px; left: 930px;"><img src="../assets/Serdtse.png" style="width: 40px; height: 40px;" alt="" class="pic2">0001</div>
-            <a href="https://urfu.modeus.org/" class="link" style="position: relative; top: -370px; left: 700px;">Перейти</a>
+        <img src="@/assets/images/intro.png" alt="" class="home__intro-image" />
+      </div>
+    </section>
+    <section class="home__popular">
+      <h2 class="home__popular-title">Популярные проекты</h2>
+      <div class="home__popular-content">
+        <div class="container">
+          <TransitionGroup tag="div" name="list" class="home__popular-items">
+            <ProjectItem
+              v-for="item of projects.slice(0, projectsLimit)"
+              :key="item.id"
+              :data="item"
+              @trigger-fetch="fetchProjects"
+            />
+          </TransitionGroup>
         </div>
-    </div>
-    <div style="box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px;
-            gap: 10px;
-            width: 840px;
-            height: 231px;
-            border: 3px solid #9747FF;
-            border-radius: 30px;
-            flex: none;
-            order: 3;
-            position: relative;
-            top: 240px;
-            flex-grow: 0;">
-        <img src="../assets/modeus2.jpg" alt="" style="display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-            padding: 10px;
-            gap: 10px;
-            width: 275px;
-            height: 211px;
-            flex: none;
-            order: 0;
-            position: relative;
-            left: -190px;
-            flex-grow: 0;">
-        <img src="../assets/modeus3.jpg" alt="" style="display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-            gap: 10px;
-            width: 275px;
-            height: 211px;
-            flex: none;
-            order: 1;
-            position: relative;
-            left: 200px;
-            top: -210px;
-            flex-grow: 0;">
-    </div>
+      </div>
+    </section>
+  </div>
 </template>
 
 <script>
-import { router } from 'websocket';
+import Button from "@/components/UI/Button.vue";
+import ProjectItem from "@/components/ProjectItem.vue";
+import { supabase } from "@/utils/supabase";
 
+export default {
+  async mounted() {
+    await this.fetchProjects();
+  },
+  components: {
+    Button,
+    ProjectItem,
+  },
+  data() {
+    return {
+      projects: [],
+      projectsLimit: 4,
+    };
+  },
+  methods: {
+    showMore() {
+      this.projectsLimit += 4;
+    },
+    async fetchProjects() {
+      const user = this.$store.state.user;
 
+      const { data } = await supabase
+        .from("projects")
+        .select(
+          "title, description, id, preview_img_url, main_img_url, rating, link, created_at"
+        );
+
+      const projects = [];
+
+      for (const el of data) {
+        if (!user) {
+          projects.push(el);
+          continue;
+        }
+
+        const { id } = el;
+        const { data: favouriteData } = await supabase
+          .from("favourites")
+          .select("project_id, id")
+          .eq("project_id", id);
+
+        if (favouriteData.length) {
+          el.favourite_id = favouriteData[0].id;
+        }
+        projects.push(el);
+      }
+
+      this.projects = [...projects];
+    },
+  },
+};
 </script>
 
-<style>
+<style lang="scss">
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
 
+.home {
+  &__intro {
+    &-content {
+      width: 33%;
+    }
+
+    &-title {
+      font-size: 96px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: $blue;
+    }
+
+    &-text {
+      font-size: 32px;
+      color: $blue;
+      margin-bottom: 30px;
+    }
+
+    &-btn {
+      background: linear-gradient(180deg, #ff6856 0%, #9747ff 100%);
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    &-image {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      height: calc(100% - 50px);
+      object-fit: contain;
+    }
+
+    & .container {
+      position: relative;
+      padding: 50px 20px 100px;
+    }
+  }
+
+  &__popular {
+    &-title {
+      font-size: 48px;
+      font-weight: 600;
+      color: $blue;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    &-btn {
+      text-transform: uppercase;
+      font-weight: 400;
+      display: flex;
+      margin: 0 auto;
+    }
+
+    &-content {
+      background: #cea8ff;
+
+      & .container {
+        padding: 60px 20px 30px;
+      }
+    }
+
+    &-items {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin-bottom: 80px;
+      gap: 30px;
+    }
+  }
+}
 </style>

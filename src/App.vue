@@ -1,50 +1,50 @@
-<template>
-  <!-- Проверка доступности пользователя в хранилище; при недоступности - показываем компонент авторизации-->
-  <Auth v-if="!store.state.user" />
-  <!-- Если пользователь доступен, показываем компонент Hello World -->
-  <EmptyLayout v-else msg="Hello Vue 3 + Vite" />
-</template>
-  
 <script>
-import Auth from './components/Auth.vue';
-import HelloWorld from './components/HelloWorld.vue';
-import HeaderComp from './components/HeaderComp.vue';
-import EmptyLayout from './layouts/EmptyLayout.vue';
-import MainLayout from './layouts/MainLayout.vue';
-import ExtraLayout from './layouts/ExtraLayout.vue';
-import RegisterView from './views/RegisterView.vue';
+import "vue3-toastify/dist/index.css";
 
-import store from "./store.js";
-import { supabase } from "./supabase";
-  
+import GuestNavigation from "@/components/Navigations/GuestNavigation.vue";
+import Notification from "@/components/Global/Notification.vue";
+import Loading from "@/components/Global/Loading.vue";
+import Header from "@/components/Header.vue";
+
+import { supabase } from "@/utils/supabase";
+import { store } from "@/utils/store";
+
 export default {
-  computed: {
-    layout() {
-      return this.$route.meta.layout + '-layout';
-    }
-  },
   components: {
-    HelloWorld, Auth, HeaderComp, EmptyLayout, MainLayout, ExtraLayout, RegisterView
+    Loading,
+    Notification,
+    GuestNavigation,
+    Header,
   },
   setup() {
-    // сначала проверяем, вошел ли пользователь в систему с помощью Supabase
-    store.state.user = supabase.auth.user;
-    // затем настраиваем слушатель для обновления хранилища, если меняется пользователь - выходит из системы или входит
+    // retrieve a user of supabase
+    store.user = supabase.auth.user();
+    // listen to auth events of supabase
     supabase.auth.onAuthStateChange((event, session) => {
-      if (event == "SIGNED_OUT") {
-        store.state.user = null;
+      if (session) {
+        store.user = session.user;
       } else {
-        store.state.user = session.user;
+        store.user = null;
       }
     });
-  
+
     return {
       store,
     };
   },
 };
 </script>
-  
+
+<template>
+  <Header />
+  <!-- <loading /> -->
+  <!-- <auth-navigation v-if="store.user" :user="store.user" /> -->
+  <!-- <guest-navigation v-else /> -->
+  <Suspense>
+    <router-view />
+  </Suspense>
+</template>
+
 <style>
-@import '@/templates/main_page.css';
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@700&family=Roboto:wght@400;500;700&display=swap");
 </style>
