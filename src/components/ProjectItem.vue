@@ -52,7 +52,7 @@
         />
       </router-link>
     </div>
-    <p class="text">{{ data.description }}</p>
+    <p class="text">{{ data.description.slice(0, 100) }}</p>
   </div>
 </template>
 
