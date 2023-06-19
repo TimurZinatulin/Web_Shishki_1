@@ -150,7 +150,6 @@ export default {
   }
 
   &__popular {
-    height: 100vh;
     &-title {
       font-size: 48px;
       font-weight: 600;
