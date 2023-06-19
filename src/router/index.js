@@ -53,7 +53,7 @@ router.beforeEach(async (to, from) => {
   const authenticated = store.getters.isAuth
 
   // redirect the user to login page if he is not authenticated
-  const securedPages = ['Profile', 'ProfileProjects', 'ProfileFavourite', 'CreateProject'];
+  const securedPages = ['Profile', 'ProfileProjects', 'ProfileFavourite', 'CreateProject', 'ProfileEdit', 'Projects', 'Profiles'];
 
   if (!authenticated && securedPages.includes(to.name)) {
     return { name: 'Login' }
